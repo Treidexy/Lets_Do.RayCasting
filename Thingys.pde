@@ -70,7 +70,7 @@ Thing[] thingys = new Thing[] {
     new Ellipse(new PVector(400, 300), new PVector(69, 50), new Material(0, 255, 0)), 
     new Rectangle(new PVector(800, 600), new PVector(100, 150), new Material(0, 255, 0)), 
     //new Thing(new PVector(0, 0), new PVector(1000, 800), new Color(255, 255, 255, 14))
-    new Polygon(new Material(0, 255, 100), new PVector(0, 700), new PVector(50, 710), new PVector(14, 760), new PVector(100, 769)),
+    new Polygon(new Material(0, 255, 100, 69), new PVector(0, 700), new PVector(50, 710), new PVector(14, 760), new PVector(100, 769)),
     ////Bounderies
     //new Polygon(new Material(255, 255, 255), new PVector(1, 1), new PVector(1, height-1)),
     //new Polygon(new Material(255, 255, 255), new PVector(1, height-1), new PVector(width-1, height-1)),
