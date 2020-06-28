@@ -1,9 +1,11 @@
+import java.awt.Robot;
+
 RenderTypes GrenderType = RenderTypes._3D;
 
 final float renderWidth = 1000;
 final float renderHeight = 800;
 
-final float raysCasted = 1000;
+final float raysCasted = 810;
 final float scale = 1;
 final float moveSpeed = 50;
 final float fov = 90;
@@ -26,11 +28,7 @@ ArrayList<PVector> lightPoses = new ArrayList<PVector>();
 ArrayList<Ray> rays;
 Thing thing;
 
-PVector mouse;
-int tesdcxt = 69;
-String tset = "ur mom";
 float angle = 0;
-float mostDist = 0;
 
 void setup() {
   size(1000, 800);
@@ -57,20 +55,25 @@ void draw() {
 
   rayCastAllDir(rayPos);
 
-  fill(255);
-  pushMatrix();
-  translate(renderWidth/2, renderHeight/2);
-  beginShape();
-  vertex(-4, -4);
-  vertex(0, -5);
-  vertex(4, -4);
-  vertex(5, 0);
-  vertex(4, 4);
-  vertex(0, 5);
-  vertex(-4, 4);
-  vertex(-5, 0);
-  endShape();
-  popMatrix();
+  if (GrenderType == RenderTypes._3D) {
+    noCursor();
+    
+    fill(255);
+    pushMatrix();
+    translate(renderWidth/2, renderHeight/2);
+    beginShape();
+    vertex(-4, -4);
+    vertex(0, -5);
+    vertex(4, -4);
+    vertex(5, 0);
+    vertex(4, 4);
+    vertex(0, 5);
+    vertex(-4, 4);
+    vertex(-5, 0);
+    endShape();
+    popMatrix();
+  } else
+    cursor();
 
   //ray.startPos = mouse;
   //ray.renderType = RenderTypes.ALL;
@@ -108,11 +111,15 @@ void rayCastAllDir(PVector pos) {
       if (GrenderType == RenderTypes._3D) {
         if (rays.get(i).isDead && rays.get(i).gotHit) {
           float dist = rays.get(i).dist;
-          float ang = cos(rays.get(i).ang - (angle - fov/2));
-          if (!mousePressed)
-            dist *= ang;
+          float ang = cos(rays.get(i).ang);
           float w = renderWidth / (float) rays.size();
-          float h = renderHeight - map(dist, 0, ang*sqrt((renderWidth*renderWidth) + (renderHeight*renderHeight)), 0, renderHeight);
+          float h = renderHeight - dist;
+          if (!mousePressed) {
+            dist *= ang;
+            h = renderHeight - map(dist, 0, sqrt((renderWidth*renderWidth) + (renderHeight*renderHeight)), 0, renderHeight);
+          } else if (mouseButton == LEFT) {
+            h = renderHeight - map(dist, 0, sqrt((renderWidth*renderWidth) + (renderHeight*renderHeight)), 0, renderHeight);
+          }
           rectMode(CENTER);
           noStroke();
           fill(rays.get(i).hit.mat.col.r, rays.get(i).hit.mat.col.g, rays.get(i).hit.mat.col.b, rays.get(i).hit.mat.col.a);
