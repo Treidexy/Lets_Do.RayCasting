@@ -1,5 +1,3 @@
-import java.awt.Robot;
-
 RenderTypes GrenderType = RenderTypes._3D;
 
 final float renderWidth = 1000;
@@ -7,14 +5,14 @@ final float renderHeight = 800;
 
 final float raysCasted = 810;
 final float scale = 1;
-final float moveSpeed = 50;
+//final float moveSpeed = 50;
 final float fov = 90;
 final float speed = 14f;
 
 final String ThingysScript = "example.thingy";
 
 float ang = 0;
-float turnSpeed = 1;
+float turnSpeed = 1f;
 float tsInc = 0.069f;
 
 int renNum;
@@ -56,8 +54,6 @@ void draw() {
   rayCastAllDir(rayPos);
 
   if (GrenderType == RenderTypes._3D) {
-    noCursor();
-    
     fill(255);
     pushMatrix();
     translate(renderWidth/2, renderHeight/2);
@@ -72,8 +68,7 @@ void draw() {
     vertex(-5, 0);
     endShape();
     popMatrix();
-  } else
-    cursor();
+  }
 
   //ray.startPos = mouse;
   //ray.renderType = RenderTypes.ALL;
@@ -111,18 +106,37 @@ void rayCastAllDir(PVector pos) {
       if (GrenderType == RenderTypes._3D) {
         if (rays.get(i).isDead && rays.get(i).gotHit) {
           float dist = rays.get(i).dist;
-          float ang = cos(rays.get(i).ang);
+          float ang = radians(rays.get(i).ang - (angle - fov/2));
+          float dif = sin(ang);
           float w = renderWidth / (float) rays.size();
           float h = renderHeight - dist;
+          //float h = h = renderHeight - map(dist, 0, ang*sqrt((renderWidth*renderWidth) + (renderHeight*renderHeight)), 0, ang * renderHeight);
           if (!mousePressed) {
-            dist *= ang;
-            h = renderHeight - map(dist, 0, sqrt((renderWidth*renderWidth) + (renderHeight*renderHeight)), 0, renderHeight);
+            dist *= dif;
+            h = renderHeight - map(dist, 0, ang*sqrt((renderWidth*renderWidth) + (renderHeight*renderHeight)), 0, dif * renderHeight);
           } else if (mouseButton == LEFT) {
             h = renderHeight - map(dist, 0, sqrt((renderWidth*renderWidth) + (renderHeight*renderHeight)), 0, renderHeight);
           }
           rectMode(CENTER);
           noStroke();
           fill(rays.get(i).hit.mat.col.r, rays.get(i).hit.mat.col.g, rays.get(i).hit.mat.col.b, rays.get(i).hit.mat.col.a);
+          rect(renderWidth - i * w - (w/2), renderHeight/2, w, h);
+        } else if (rays.get(i).isDead) {
+          float dist = rays.get(i).dist;
+          float ang = radians(rays.get(i).ang - (angle - fov/2));
+          float dif = sin(ang);
+          float w = renderWidth / (float) rays.size();
+          float h = renderHeight - dist;
+          //float h = h = renderHeight - map(dist, 0, ang*sqrt((renderWidth*renderWidth) + (renderHeight*renderHeight)), 0, ang * renderHeight);
+          if (!mousePressed) {
+            dist *= dif;
+            h = renderHeight - map(dist, 0, ang*sqrt((renderWidth*renderWidth) + (renderHeight*renderHeight)), 0, dif * renderHeight);
+          } else if (mouseButton == LEFT) {
+            h = renderHeight - map(dist, 0, sqrt((renderWidth*renderWidth) + (renderHeight*renderHeight)), 0, renderHeight);
+          }
+          rectMode(CENTER);
+          noStroke();
+          fill(0x69);
           rect(renderWidth - i * w - (w/2), renderHeight/2, w, h);
         }
       }
@@ -147,11 +161,11 @@ void keyPressed() {
     ang -= turnSpeed;
     break;
   case 32:
-    GrenderType = (GrenderType == RenderTypes._3D)? RenderTypes.ALL: RenderTypes._3D;
+    GrenderType = (GrenderType == RenderTypes._3D)? RenderTypes.HIT: RenderTypes._3D;
     break;
   case 9:
     renNum++;
-    if (renNum > RenderTypes.values().length)
+    if (renNum >= RenderTypes.values().length)
       renNum = 0;
     GrenderType = RenderTypes.values()[renNum];
     break;
