@@ -1,9 +1,9 @@
-RenderTypes GrenderType = RenderTypes._3D;
+RenderTypes GrenderType = RenderTypes._3D; 
 
-final float renderWidth = 1000;
-final float renderHeight = 800;
+float renderWidth;
+float renderHeight;
 
-final float raysCasted = 810;
+final float raysCasted = 360;
 final float scale = 1;
 //final float moveSpeed = 50;
 final float fov = 90;
@@ -27,14 +27,21 @@ ArrayList<Ray> rays;
 Thing thing;
 
 void setup() {
-  size(1000, 800);
-  surface.setAlwaysOnTop(true);
+  fullScreen();
+  
+  renderWidth = width;
+  renderHeight = height;
+  
+  //size(1000, 800);
+  //surface.setAlwaysOnTop(true);
 
   //readThingys(ThingysScript);
 
   ray = new Ray(new PVector(width/2, height/2), 0, thingys);
   ray.renderType = RenderTypes.ALL;
   rayPos = new PVector(0, 0);
+  
+  setupButtons();
 }
 
 void draw() {
@@ -74,6 +81,8 @@ void draw() {
   //while (!ray.isDead) {
   //  ray.draw();
   //}
+  
+  drawButtons();
 
   noStroke();
   fill(0);
@@ -108,18 +117,18 @@ void rayCastAllDir(PVector pos) {
     if (GrenderType == RenderTypes._3D) {
       if (ray.gotHit) {
         float dist = ray.dist;
-        float a = ray.ang - ang;
+        //float a = ray.ang - ang;
         float w = renderWidth / (float) rays.size();
         float h = renderHeight - dist;
-        //h = renderHeight - map(dist, 0, sqrt((renderWidth*renderWidth) + (renderHeight*renderHeight)), 0, renderHeight);
-        if (!mousePressed) {
-          println(a);
-          dist *= sin(a);
-          println(a);
-          h = map(dist, 0, sqrt((renderWidth*renderWidth) + (renderHeight*renderHeight)), renderHeight, 0);
-        } else if (mouseButton == LEFT) {
-          h = map(dist, 0, sqrt((renderWidth*renderWidth) + (renderHeight*renderHeight)), renderHeight, 0);
-        }
+        h = renderHeight - map(dist, 0, sqrt((renderWidth*renderWidth) + (renderHeight*renderHeight)), 0, renderHeight);
+        //if (!mousePressed) {
+        //  println(a);
+        //  dist *= sin(a);
+        //  println(a);
+        //  h = map(dist, 0, sqrt((renderWidth*renderWidth) + (renderHeight*renderHeight)), renderHeight, 0);
+        //} else if (mouseButton == LEFT) {
+          //h = map(dist, 0, sqrt((renderWidth*renderWidth) + (renderHeight*renderHeight)), renderHeight, 0);
+        //}
         rectMode(CENTER);
         noStroke();
         //fill(ray.col.r - (255 - ray.hit.mat.col.r), ray.col.g - (255 - ray.hit.mat.col.g), ray.col.b - (255 - ray.hit.mat.col.b), ray.col.a - (255 - ray.hit.mat.col.a));
@@ -150,18 +159,16 @@ void rayCastAllDir(PVector pos) {
 void keyPressed() {
   switch(keyCode) {
   case 87:
-    rayPos.x += sin(radians(ang)) * speed;
-    rayPos.y += cos(radians(ang)) * speed;
+    forward();
     break;
   case 83:
-    rayPos.x -= sin(radians(ang)) * speed;
-    rayPos.y -= cos(radians(ang)) * speed;
+    backward();
     break;
   case 65:
-    ang += turnSpeed;
+    left();
     break;
   case 68:
-    ang -= turnSpeed;
+    right();
     break;
   case 32:
     GrenderType = (GrenderType == RenderTypes._3D)? RenderTypes.ALL: RenderTypes._3D;
@@ -176,22 +183,38 @@ void keyPressed() {
   case 38:
     //turnSpeed += tsInc;
     //lightPos2.y -= moveSpeed;
-    rayPos.x += sin(radians(ang)) * speed;
-    rayPos.y += cos(radians(ang)) * speed;
+    forward();
     break;
   case 40:
     //  turnSpeed -= tsInc;
     //  //lightPos2.y += moveSpeed;
-    rayPos.x -= sin(radians(ang)) * speed;
-    rayPos.y -= cos(radians(ang)) * speed;
+    backward();
     break;
   case 37:
-    ang += turnSpeed;
+    left();
     //lightPos2.x -= moveSpeed;
     break;
   case 39:
-    ang -= turnSpeed;
+    right();
     //lightPos2.x += moveSpeed;
     break;
   }
+}
+
+void forward() {
+  rayPos.x += sin(radians(ang)) * speed;
+  rayPos.y += cos(radians(ang)) * speed;
+}
+
+void backward() {
+  rayPos.x -= sin(radians(ang)) * speed;
+  rayPos.y -= cos(radians(ang)) * speed;
+}
+
+void left() {
+  ang += turnSpeed;
+}
+
+void right() {
+  ang -= turnSpeed;
 }

@@ -1,4 +1,4 @@
-enum RenderTypes { //<>//
+enum RenderTypes { //<>// //<>// //<>//
   ALL, 
   EXCEPT,
   HIT,
